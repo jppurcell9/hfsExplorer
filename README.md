@@ -1,4 +1,4 @@
 hfsExplorer
 ===========
 
-Attempt to recover some files from a borked HFS Plus drive
+This is my attempt to recover some files from a borked HFS Plus drive.  YMMV.
