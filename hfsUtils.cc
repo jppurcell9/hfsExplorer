@@ -1,6 +1,38 @@
 //hfsUtils.cc
 
+#include <time.h>
 #include "hfsUtils.h"
+
+/*
+ * to_bsd_time - convert from Mac OS time (seconds since 1/1/1904)
+ *		 to BSD time (seconds since 1/1/1970)
+ */
+time_t to_bsd_time(u_int32_t hfs_time)
+{
+	u_int32_t gmt = hfs_time;
+
+	if (gmt > MAC_GMT_FACTOR)
+		gmt -= MAC_GMT_FACTOR;
+	else
+		gmt = 0;	/* don't let date go negative! */
+
+	return (time_t)gmt;
+}
+
+/*
+ * to_hfs_time - convert from BSD time (seconds since 1/1/1970)
+ *		 to Mac OS time (seconds since 1/1/1904)
+ */
+u_int32_t to_hfs_time(time_t bsd_time)
+{
+	u_int32_t hfs_time = (u_int32_t)bsd_time;
+
+	/* don't adjust zero - treat as uninitialzed */
+	if (hfs_time != 0)
+		hfs_time += MAC_GMT_FACTOR;
+
+	return (hfs_time);
+}
 
 void byteSwapVolumeHeader(HFSPlusVolumeHeader* header) {
 	header->signature = bswap_16(header->signature);

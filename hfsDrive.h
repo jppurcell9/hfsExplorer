@@ -1,12 +1,10 @@
 // hfsDrive.h
 
-#ifndef __HFS_DRIVE__
-#define __HFS_DRIVE__
+#ifndef HFS_DRIVE
+#define HFS_DRIVE
 
 #include <fstream>
 #include <hfs/hfs_format.h>
-
-using namespace std;
 
 class HfsDrive {
 public:
@@ -22,17 +20,19 @@ private:
 	static const unsigned long int startOffset = 209735680;
 	static const unsigned long int sectorSize = 512;
 
-	ifstream* _backingStore;
-	ifstream::pos_type _storeSize;
+	std::ifstream* _backingStore;
+	std::ifstream::pos_type _storeSize;
 
 	HFSPlusVolumeHeader* _primaryHeader;
 	HFSPlusVolumeHeader* _secondaryHeader;
 
-	streamsize readPrimaryVolumeHeader();
-	streamsize readSecondaryVolumeHeader();
-	streamsize readVolumeHeader(HFSPlusVolumeHeader* header);
+	std::streamsize readPrimaryVolumeHeader();
+	std::streamsize readSecondaryVolumeHeader();
+	std::streamsize readVolumeHeader(HFSPlusVolumeHeader* header);
 
 	void dumpVolumeHeader(const char* name, HFSPlusVolumeHeader* header);
+	char* toASCII(unsigned short int value, char* buffer);
+	char* toASCII(unsigned int value, char* buffer);
 };
 
 #endif

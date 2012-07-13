@@ -2,6 +2,8 @@
 
 #include <iostream>
 #include <fstream>
+#include <iomanip>
+#include <time.h>
 #include <hfs/hfs_format.h>
 
 #include "hfsDrive.h"
@@ -61,18 +63,61 @@ void HfsDrive::dumpSecondaryHeader() {
 }
 
 void HfsDrive::dumpVolumeHeader(const char* name, HFSPlusVolumeHeader* header) {
+	char signatureBuffer[] = "  ";
+	char lmvBuffer[] = "    ";
+
+	time_t aTime;
+
+	cout << setfill('0');
 	cout << "Dumping volume header: " << name << endl
-		 << "signature: " << header->signature << endl
-		 << "version: " << header-> version << endl
-		 << "attributes: " << header->attributes << endl
-		 << "lastMountedVersion: " << header->lastMountedVersion << endl
-		 << "journalInfoBlock: " << header->journalInfoBlock << endl
-		 << endl
-		 << "create date: " << header->createDate << endl
-		 << "modify date: " << header->modifyDate << endl
-		 << "backup date: " << header->backupDate << endl
-		 << "checked date: " << header->checkedDate << endl
+		 << hex
+		 << "  signature: " << setw(4) << header->signature 
+		 << " (" << this->toASCII(header->signature, signatureBuffer) << ")" << endl
+		 << "  version: " << setw(4) << header-> version << endl
+		 << "  attributes: " << setw(8) << header->attributes << endl
+		 << "  last mounted version: " << header->lastMountedVersion 
+		 << " (" << this->toASCII(header->lastMountedVersion, lmvBuffer) << ")" << endl
+		 << dec
+		 << "  journal info block: " << header->journalInfoBlock << endl
 		 << endl;
+
+	aTime = to_bsd_time(header->createDate);
+	cout << "  create date: " << ctime(&aTime);
+	aTime = to_bsd_time(header->modifyDate);
+	cout << "  modify date: " << ctime(&aTime);
+	aTime = to_bsd_time(header->backupDate);
+	cout << "  backup date: " << ctime(&aTime);
+	aTime = to_bsd_time(header->checkedDate);
+	cout << "  checked date: " << ctime(&aTime) << endl;
+
+	cout << "  file count: " << header->fileCount << endl
+		 << "  folder count: " << header->folderCount << endl
+		 << endl
+		 << "  block size: " << header->blockSize << endl
+		 << "  total blocks: " << header->totalBlocks << endl
+		 << "  free blocks: " << header->freeBlocks << endl
+		 << endl
+		 << "  next allocation: " << header->nextAllocation << endl
+		 << "  resource clump size: " << header->rsrcClumpSize << endl
+		 << "  data clump size: " << header->dataClumpSize << endl
+		 << "  next catalog id: " << header->nextCatalogID << endl
+		 << endl
+		 << "  write count: " << header->writeCount << endl
+		 << hex
+		 << "  encodings bitmap: " << setw(8) << header->encodingsBitmap << endl
+		 << endl;
+}
+
+char* HfsDrive::toASCII(unsigned short value, char* buffer) {
+	buffer[1] = (char)(value & 0x00FF);
+	buffer[0] = (char)(value >> 8);
+	return buffer;
+}
+
+char* HfsDrive::toASCII(unsigned int value, char* buffer) {
+	this->toASCII((unsigned short)(value & 0x0000FFFF), buffer + (2 * sizeof(char)));
+	this->toASCII((unsigned short)(value >> 16), buffer);
+	return buffer;
 }
 
 streamsize HfsDrive::readPrimaryVolumeHeader() {
