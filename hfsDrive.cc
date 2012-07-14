@@ -1,20 +1,18 @@
 // hfsDrive.cc
 
 #include <iostream>
-#include <fstream>
 #include <iomanip>
 #include <time.h>
-#include <hfs/hfs_format.h>
 
 #include "hfsDrive.h"
 #include "hfsUtils.h"
 
 using namespace std;
 
-HfsDrive::HfsDrive() {
-	this->_backingStore = NULL;
-	this->_primaryHeader = NULL;
-	this->_secondaryHeader = NULL;
+HfsDrive::HfsDrive() 
+	: _backingStore(NULL), _driveInfo(NULL), _primaryHeader(NULL), _secondaryHeader(NULL), 
+	  _catalogFile(NULL)
+{
 }
 
 void HfsDrive::mount(const char* filename) {
@@ -31,6 +29,14 @@ void HfsDrive::mount(const char* filename) {
 
 	this->readPrimaryVolumeHeader();
 	this->readSecondaryVolumeHeader();
+
+	this->_driveInfo = new HfsDriveInfo;
+	this->_driveInfo->startOffset = HfsDrive::startOffset;
+	this->_driveInfo->blockSize = this->_primaryHeader->blockSize;
+
+	this->_catalogFile = new HfsCatalogFile(this->_driveInfo, this->_backingStore, &(this->_primaryHeader->catalogFile));
+	cout << "Catalog file header: " << endl;
+	this->_catalogFile->dumpHeaderRec();
 }
 
 void HfsDrive::unmount() {
@@ -51,6 +57,11 @@ void HfsDrive::unmount() {
 	if (this->_secondaryHeader != NULL) {
 		delete this->_secondaryHeader;
 		this->_secondaryHeader = NULL;
+	}
+
+	if (this->_catalogFile != NULL) {
+		delete this->_catalogFile;
+		this->_catalogFile = NULL;
 	}
 }
 
@@ -88,7 +99,8 @@ void HfsDrive::dumpVolumeHeader(const char* name, HFSPlusVolumeHeader* header) {
 	aTime = to_bsd_time(header->backupDate);
 	cout << "  backup date: " << ctime(&aTime);
 	aTime = to_bsd_time(header->checkedDate);
-	cout << "  checked date: " << ctime(&aTime) << endl;
+	cout << "  checked date: " << ctime(&aTime) 
+		 << endl;
 
 	cout << "  file count: " << header->fileCount << endl
 		 << "  folder count: " << header->folderCount << endl
@@ -145,4 +157,17 @@ streamsize HfsDrive::readVolumeHeader(HFSPlusVolumeHeader* header) {
 	byteSwapVolumeHeader(header);
 
 	return this->_backingStore->gcount();
+}
+
+unsigned int HfsDrive::getBlockSize() {
+	if (this->_primaryHeader == NULL) {
+		if (this->_secondaryHeader == NULL) {
+			return 0;
+		}
+		else {
+			return this->_secondaryHeader->blockSize;
+		}
+	} else {
+		return this->_primaryHeader->blockSize;
+	}
 }

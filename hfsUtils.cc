@@ -1,6 +1,5 @@
 //hfsUtils.cc
 
-#include <time.h>
 #include "hfsUtils.h"
 
 /*

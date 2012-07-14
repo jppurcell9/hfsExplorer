@@ -6,6 +6,9 @@
 #include <fstream>
 #include <hfs/hfs_format.h>
 
+#include "hfsDriveInfo.h"
+#include "hfsCatalogFile.h"
+
 class HfsDrive {
 public:
 	HfsDrive();
@@ -16,6 +19,8 @@ public:
 	void dumpPrimaryHeader();
 	void dumpSecondaryHeader();
 
+	unsigned int getBlockSize();
+
 private:
 	static const unsigned long int startOffset = 209735680;
 	static const unsigned long int sectorSize = 512;
@@ -23,8 +28,12 @@ private:
 	std::ifstream* _backingStore;
 	std::ifstream::pos_type _storeSize;
 
+	HfsDriveInfo* _driveInfo;
+
 	HFSPlusVolumeHeader* _primaryHeader;
 	HFSPlusVolumeHeader* _secondaryHeader;
+
+	HfsCatalogFile* _catalogFile;
 
 	std::streamsize readPrimaryVolumeHeader();
 	std::streamsize readSecondaryVolumeHeader();

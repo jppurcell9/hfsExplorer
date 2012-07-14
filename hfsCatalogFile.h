@@ -6,14 +6,21 @@
 #include <fstream>
 #include <hfs/hfs_format.h>
 
-class HfsCatalogFile {
+#include "hfsBTree.h"
+#include "hfsDriveInfo.h"
+
+class HfsCatalogFile : public HfsBTree {
 public: 
-	HfsCatalogFile(std::ifstream* backingStore, unsigned long int offset, HFSPlusForkData* fork);
+	HfsCatalogFile(HfsDriveInfo* driveInfo, std::ifstream* backingStore, HFSPlusForkData* fork);
 
 private:
 	std::ifstream* _backingStore;
 	unsigned long int _offset;
 	HFSPlusForkData* _fork;
+
+	BTHeaderRec* _header;
+
+	unsigned long int calcOffsetFromNodeNumber(unsigned int nodeNumber);
 };
 
 #endif
