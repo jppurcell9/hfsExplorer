@@ -26,7 +26,6 @@ HfsBTree::HfsBTree(HfsDriveInfo* driveInfo, ifstream* backingStore, HFSPlusForkD
 }
 
 HfsBTree::~HfsBTree() {
-	cout << "Disposing HfsBTree" << endl;
 	if (this->_header != NULL) {
 		delete this->_header;
 		this->_header = NULL;

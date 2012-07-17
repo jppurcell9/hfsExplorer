@@ -1,4 +1,16 @@
 # hfs makefile
 
-driver : driver.cc hfsDrive.cc hfsDrive.h hfsUtils.cc hfsUtils.h hfsDriveInfo.h hfsBTree.cc hfsBTree.h hfsCatalogFile.cc hfsCatalogFile.h
-	gcc driver.cc hfsDrive.cc hfsUtils.cc hfsBTree.cc hfsCatalogFile.cc -lstdc++ -o driver
+driver: driver.cc hfsDrive.o hfsUtils.o hfsBTree.o hfsCatalogFile.o 
+	gcc driver.cc hfsDrive.o hfsUtils.o hfsBTree.o hfsCatalogFile.o -lstdc++ -o driver
+
+hfsUtils.o: hfsUtils.cc hfsUtils.h
+	gcc -c hfsUtils.cc -o hfsUtils.o
+
+hfsBTree.o: hfsBTree.cc hfsBTree.h hfsDriveInfo.h
+	gcc -c hfsBTree.cc -o hfsBTree.o
+
+hfsCatalogFile.o: hfsCatalogFile.cc hfsCatalogFile.h
+	gcc -c hfsCatalogFile.cc -o hfsCatalogFile.o
+
+hfsDrive.o: hfsDrive.cc
+	gcc -c hfsDrive.cc -o hfsDrive.o
