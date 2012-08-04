@@ -2,3 +2,7 @@
 driver
 
 *.o
+
+hfsExplorer.sublime-project
+
+hfsExplorer.sublime-workspace

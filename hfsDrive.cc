@@ -35,8 +35,8 @@ void HfsDrive::mount(const char* filename) {
 	this->_driveInfo->blockSize = this->_primaryHeader->blockSize;
 
 	this->_catalogFile = new HfsCatalogFile(this->_driveInfo, this->_backingStore, &(this->_primaryHeader->catalogFile));
-	cout << "Catalog file header: " << endl;
-	this->_catalogFile->dumpHeaderRec();
+	//cout << "Catalog file header: " << endl;
+	//this->_catalogFile->dumpHeaderRec();
 }
 
 void HfsDrive::unmount() {
@@ -120,15 +120,15 @@ void HfsDrive::dumpVolumeHeader(const char* name, HFSPlusVolumeHeader* header) {
 		 << endl;
 }
 
-char* HfsDrive::toASCII(unsigned short value, char* buffer) {
+char* HfsDrive::toASCII(u_int16_t value, char* buffer) {
 	buffer[1] = (char)(value & 0x00FF);
 	buffer[0] = (char)(value >> 8);
 	return buffer;
 }
 
-char* HfsDrive::toASCII(unsigned int value, char* buffer) {
-	this->toASCII((unsigned short)(value & 0x0000FFFF), buffer + (2 * sizeof(char)));
-	this->toASCII((unsigned short)(value >> 16), buffer);
+char* HfsDrive::toASCII(u_int32_t value, char* buffer) {
+	this->toASCII((u_int16_t)(value & 0x0000FFFF), buffer + (2 * sizeof(char)));
+	this->toASCII((u_int16_t)(value >> 16), buffer);
 	return buffer;
 }
 
@@ -159,7 +159,7 @@ streamsize HfsDrive::readVolumeHeader(HFSPlusVolumeHeader* header) {
 	return this->_backingStore->gcount();
 }
 
-unsigned int HfsDrive::getBlockSize() {
+u_int32_t HfsDrive::getBlockSize() {
 	if (this->_primaryHeader == NULL) {
 		if (this->_secondaryHeader == NULL) {
 			return 0;

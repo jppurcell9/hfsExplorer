@@ -8,3 +8,7 @@ HfsCatalogFile::HfsCatalogFile(HfsDriveInfo* driveInfo, ifstream* backingStore, 
 	: HfsBTree(driveInfo, backingStore, fork)
 {
 }
+
+void HfsCatalogFile::directoryList() {
+	
+}

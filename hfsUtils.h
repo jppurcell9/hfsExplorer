@@ -16,16 +16,16 @@
 time_t to_bsd_time(u_int32_t hfs_time);
 u_int32_t to_hfs_time(time_t bsd_time);
 
-static inline unsigned short bswap_16(unsigned short x) {
+static inline u_int16_t bswap_16(u_int16_t x) {
   return (x>>8) | (x<<8);
 }
 
-static inline unsigned int bswap_32(unsigned int x) {
+static inline u_int32_t bswap_32(u_int32_t x) {
   return (bswap_16(x&0xffff)<<16) | (bswap_16(x>>16));
 }
 
-static inline unsigned long bswap_64(unsigned long int x) {
-	return (((unsigned long int)bswap_32(x&0xffffffff))<<32) | (bswap_32(x>>32));
+static inline u_int64_t bswap_64(u_int64_t x) {
+	return (((u_int64_t)bswap_32(x&0xffffffff))<<32) | (bswap_32(x>>32));
 }
 
 void byteSwapVolumeHeader(HFSPlusVolumeHeader* header);

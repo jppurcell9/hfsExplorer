@@ -4,6 +4,7 @@
 #define HFS_B_TREE
 
 #include <fstream>
+#include <sys/types.h>
 #include <hfs/hfs_format.h>
 
 #include "hfsDriveInfo.h"
@@ -20,13 +21,24 @@ protected:
 	std::ifstream* _backingStore;
 	HFSPlusForkData* _fork;
 
+	u_int16_t _nodeSize;
+	u_int8_t* _headerNode;
+
 	BTHeaderRec* _header;
 
-	unsigned long int calcOffsetFromNodeNumber(unsigned int nodeNumber);
+	u_int64_t calcHeaderNodeOffset();
+	u_int64_t calcOffsetFromNodeNumber(u_int32_t nodeNumber);
+
+	
 
 private:
-	std::streamsize readNodeDescriptor(unsigned int nodeNumber, BTNodeDescriptor* descriptor);
-	std::streamsize readNodeHeaderRecord(unsigned int nodeNumber, BTHeaderRec* descriptor);
+	void init();
+	
+	u_int16_t readNodeSize();
+	std::streamsize readNode(u_int32_t nodeNumber, u_int8_t* buffer);
+
+	void initNode(u_int8_t* buffer);
+	void initHeaderNode(u_int8_t* buffer);
 };
 
 #endif

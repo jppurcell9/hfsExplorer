@@ -19,11 +19,11 @@ public:
 	void dumpPrimaryHeader();
 	void dumpSecondaryHeader();
 
-	unsigned int getBlockSize();
+	u_int32_t getBlockSize();
 
 private:
-	static const unsigned long int startOffset = 209735680;
-	static const unsigned long int sectorSize = 512;
+	static const u_int64_t startOffset = 209735680;
+	static const u_int64_t sectorSize = 512;
 
 	std::ifstream* _backingStore;
 	std::ifstream::pos_type _storeSize;
@@ -40,8 +40,8 @@ private:
 	std::streamsize readVolumeHeader(HFSPlusVolumeHeader* header);
 
 	void dumpVolumeHeader(const char* name, HFSPlusVolumeHeader* header);
-	char* toASCII(unsigned short int value, char* buffer);
-	char* toASCII(unsigned int value, char* buffer);
+	char* toASCII(u_int16_t value, char* buffer);
+	char* toASCII(u_int32_t value, char* buffer);
 };
 
 #endif

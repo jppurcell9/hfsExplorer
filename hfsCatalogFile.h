@@ -13,14 +13,8 @@ class HfsCatalogFile : public HfsBTree {
 public: 
 	HfsCatalogFile(HfsDriveInfo* driveInfo, std::ifstream* backingStore, HFSPlusForkData* fork);
 
+	void directoryList();
 private:
-	std::ifstream* _backingStore;
-	unsigned long int _offset;
-	HFSPlusForkData* _fork;
-
-	BTHeaderRec* _header;
-
-	unsigned long int calcOffsetFromNodeNumber(unsigned int nodeNumber);
 };
 
 #endif
