@@ -4,8 +4,8 @@
 #define HFS_DRIVE_INFO
 
 struct HfsDriveInfo {
-	unsigned long int startOffset;
-	unsigned int blockSize;
+	u_int64_t startOffset;
+	u_int32_t blockSize;
 };
 
 #endif
